@@ -14,6 +14,8 @@ WORKDIR /usr/src/app
 
 ENV GO111MODULE=on
 
+RUN apk add -U --no-cache ca-certificates && update-ca-certificates
+
 COPY go.mod .
 COPY go.sum .
 
@@ -29,6 +31,7 @@ FROM scratch
 WORKDIR /usr/src/app
 ENV GIN_MODE=release
 
+COPY --from=app-builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=asset-builder /usr/src/app/dist frontend/dist
 COPY --from=app-builder /go/bin/poddy .
 
